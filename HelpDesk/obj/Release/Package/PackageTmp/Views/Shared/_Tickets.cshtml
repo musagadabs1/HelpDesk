@@ -1,0 +1,61 @@
+﻿@model List<HelpDesk.Models.TicketViewModel>
+@{
+    bool isICTMember = HelpDesk.Controllers.HomeController.IsMember(User.Identity.Name, System.Configuration.ConfigurationManager.AppSettings["ADAG"].ToString());
+    ViewBag.Title = (isICTMember ? "Tickets" : "My Tickets");
+}
+
+<h2>@ViewBag.Title</h2>
+<br />
+
+@if (isICTMember)
+{
+<div class="row">
+    <div class="form-group">
+        <label class="control-label">Filter by: </label>
+        <div class="col-md-5">
+            <select id="filterBy" class="form-control">
+                <option value="N">New/Pending</option>
+                <option value="I">In progress</option>
+                <option value="D">Note Added</option>
+                <option value="R">Resolved</option>
+                <option value="C">Closed successfully</option>
+                <option value="U">Closed unsuccessfully</option>
+            </select>
+        </div>
+    </div>
+</div>
+}
+
+<table id="myTickets" class="table table-bordered table-striped js-dataTable-full-pagination">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>Ticket No#</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (HelpDesk.Models.TicketViewModel item in Model)
+        {
+            <tr>
+                <td>
+                    @item.SN
+                    <input type="hidden" class="id" value="@item.TicketID" />
+                </td>
+                <td>@item.TicketNo</td>
+                <td>@item.Subject</td>
+                <td>@HelpDesk.Controllers.HomeController.GetTicketStatus(item.Status)</td>
+                <td>@HelpDesk.Controllers.HomeController.CalculateAge(item.CreationDate, DateTime.Now)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    #myTickets tbody tr:hover {
+        cursor: pointer;
+        background-color: #E1E1E1;
+    }
+</style>

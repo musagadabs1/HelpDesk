@@ -1,0 +1,180 @@
+﻿@using HelpDesk.DAL;
+@using HelpDesk.Models;
+@model TicketViewModel
+@{
+    ViewBag.Title = "Ticket Details";
+
+    List<TicketNoteViewModel> ticketNotes = Model.TicketNoteViewModels.OrderByDescending(p => p.CreationDate).ToList();
+    List<TicketFileViewModel> ticketFiles = Model.TicketFileViewModels.Where(p => p.FileForTOrN.Equals("T") && p.RefID.Equals(Model.TicketID)).ToList();
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <label class="col-md-4 control-label text-right">Ticket:</label>
+        <div class="col-md-8">
+            <label >@Model.TicketNo</label>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <label class="col-md-4 control-label text-right">Age:</label>
+        <div class="col-md-8">
+            <label>@HelpDesk.Controllers.HomeController.CalculateAge(Model.CreationDate, DateTime.Now)</label>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <label class="col-md-4 control-label text-right">Creation Date:</label>
+        <div class="col-md-8">
+            <label>@string.Format("{0:dd-MM-yyyy h:mm:ss tt}", Model.CreationDate)</label>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="col-md-4 control-label text-right">Subject:</label>
+        <div class="col-md-8">
+            <label>@Model.Subject</label>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <label class="col-md-4 control-label text-right">Owner:</label>
+        <div class="col-md-8">
+            <label>@Model.CreatedBy</label>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="col-md-4 control-label text-right">Status:</label>
+        <div class="col-md-8">
+            <label>@HelpDesk.Controllers.HomeController.GetTicketStatus(Model.Status)</label>
+        </div>
+    </div>
+</div>
+
+<h2>Conversations</h2>
+
+<div class="accordion-panel">
+    @if (ticketNotes.Count > 0)
+    {
+        foreach (TicketNoteViewModel ticketNote in ticketNotes)
+        {
+            var noteFiles = Model.TicketFileViewModels.Where(p => p.FileForTOrN.Equals("N") && p.RefID.Equals(Model.TicketID)).ToList();
+
+            <button class="accordion">
+                <span style="width: 50%;">Note added by @ticketNote.CreatedBy</span>
+                <span style="width: 50%; text-align: right;">@string.Format("{0:dd-MM-yyyy h:mm:ss tt}", ticketNote.CreationDate)</span>
+            </button>
+            <div class="panel">
+                <p>@ticketNote.Note</p>
+                @if (noteFiles.Count > 0)
+                {
+                    foreach (TicketFileViewModel noteFile in noteFiles)
+                    {
+                        <a href="@Url.Content("~/Content/Uploads/FileAttachments/" + noteFile.FileName)">@noteFile.FileName</a><text>, </text>
+                    }
+                }
+            </div>
+            <p style="height: 3px;">&nbsp;</p>
+        }
+    }
+
+    <input type="hidden" id="filesNoteCount" value="@ticketNotes.Count" />
+    <button class="accordion">Initiated by @Model.CreatedBy</button>
+    <div class="panel" id="initiatedBy">
+        <p>@Model.Description</p>
+
+        @if (ticketFiles.Count > 0)
+        {
+            <hr />
+            <h4>Attachments</h4>
+            foreach (TicketFileViewModel noteFile in ticketFiles)
+            {
+                <a href="@Url.Content("~/Content/Uploads/FileAttachments/" + noteFile.FileName)">@noteFile.FileName</a><text>, </text>
+            }
+        }
+    </div>
+</div>
+
+<br />
+<button class="accordion">Update Ticket</button>
+<div class="panel">
+    @using (Html.BeginForm("UpdateTicket", "Home", FormMethod.Post, new { @class = "form-horizontal", id = "updateTicketForm", role = "form", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Next Stage</label>
+                <select id="Status" name="Status" class="form-control select2" required>
+                    <option value="">[Select a category for your issue]</option>
+                    <option value="I">In progress</option>
+                    <option value="D">Note Added</option>
+                    <option value="R">Resolved</option>
+                    <option value="C">Closed successfully</option>
+                    <option value="U">Closed unsuccessfully</option>
+                    <option value="O">Reopened</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" id="Description" name="Description" rows="6" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>File Attachement(s)</label>
+                <input type="file" id="FileAttachments" name="FileAttachments" multiple />
+            </div>
+
+            <input type="hidden" value="@Model.Subject" id="Subject" name="Subject" />
+            <input type="hidden" value="@Model.TicketNo" id="TicketNo" name="TicketNo" />
+            <input type="hidden" value="@Model.OwnerEmail" id="OwnerEmail" name="OwnerEmail" />
+            <input type="hidden" value="@Model.TicketID" id="TicketID" name="TicketID" />
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+
+            for (i = 0; i < acc.length; i++) {
+                acc[i].onclick = function () {
+                    /* Toggle between adding and removing the "active" class,
+                    to highlight the button that controls the panel */
+                    this.classList.toggle("active");
+
+                    /* Toggle between hiding and showing the active panel */
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "block") {
+                        panel.style.display = "none";
+                    } else {
+                        panel.style.display = "block";
+                    }
+                }
+            }
+
+            var filesNoteCount = parseInt($('#filesNoteCount').val()),
+                initiatedBy = $('#initiatedBy');
+
+            if (filesNoteCount == 0) {
+                initiatedBy.css('display', 'block');
+            }
+
+            var subject = getParameterByName('subject'),
+                mailBody = getParameterByName('mailBody'),
+                recipients = getParameterByName('recipients');
+
+            if (subject && mailBody && recipients) {
+                window.location.href = "http://ieianchorpensions.com/?api_ict_mail_ticket&subject=" + subject + "&mailBody=" + mailBody.replace("'", "''") + "&recipients=" + recipients;
+            }
+        });
+    </script>
+}

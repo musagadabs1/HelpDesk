@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="HelpDeskModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="CategoryID" />
+    </Key>
+    <Property Name="CategoryID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Category" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreationDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="GeneralSetting">
+    <Key>
+      <PropertyRef Name="GeneralSettingID" />
+    </Key>
+    <Property Name="GeneralSettingID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="EnableEmailAlert" Type="bit" Nullable="false" />
+    <Property Name="EnableActionReminder" Type="bit" Nullable="false" />
+    <Property Name="RecipientEmails" Type="ntext" Nullable="false" />
+    <Property Name="ActionReminderInterval" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Ticket">
+    <Key>
+      <PropertyRef Name="TicketID" />
+    </Key>
+    <Property Name="TicketID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TicketNo" Type="nvarchar" MaxLength="10" Nullable="false" />
+    <Property Name="CategoryID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Subject" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Description" Type="ntext" Nullable="false" />
+    <Property Name="Status" Type="nchar" MaxLength="1" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreationDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+    <Property Name="OwnerEmail" Type="nvarchar" MaxLength="150" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TicketFile">
+    <Key>
+      <PropertyRef Name="TicketFileID" />
+    </Key>
+    <Property Name="TicketFileID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TicketID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="FileName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="FileForTOrN" Type="nchar" MaxLength="1" Nullable="false" />
+    <Property Name="RefID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreationDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TicketNote">
+    <Key>
+      <PropertyRef Name="TicketNoteID" />
+    </Key>
+    <Property Name="TicketNoteID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TicketID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Note" Type="ntext" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreationDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_TicketFile_Ticket">
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="1" />
+    <End Role="TicketFile" Type="Self.TicketFile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ticket">
+        <PropertyRef Name="TicketID" />
+      </Principal>
+      <Dependent Role="TicketFile">
+        <PropertyRef Name="TicketID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TicketNote_Ticket">
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="1" />
+    <End Role="TicketNote" Type="Self.TicketNote" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ticket">
+        <PropertyRef Name="TicketID" />
+      </Principal>
+      <Dependent Role="TicketNote">
+        <PropertyRef Name="TicketID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UQ_Ticket_CategoryID">
+    <End Role="Category" Type="Self.Category" Multiplicity="1" />
+    <End Role="Ticket" Type="Self.Ticket" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="CategoryID" />
+      </Principal>
+      <Dependent Role="Ticket">
+        <PropertyRef Name="CategoryID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="HelpDeskModelStoreContainer">
+    <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="GeneralSetting" EntityType="Self.GeneralSetting" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Ticket" EntityType="Self.Ticket" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TicketFile" EntityType="Self.TicketFile" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TicketNote" EntityType="Self.TicketNote" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_TicketFile_Ticket" Association="Self.FK_TicketFile_Ticket">
+      <End Role="Ticket" EntitySet="Ticket" />
+      <End Role="TicketFile" EntitySet="TicketFile" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TicketNote_Ticket" Association="Self.FK_TicketNote_Ticket">
+      <End Role="Ticket" EntitySet="Ticket" />
+      <End Role="TicketNote" EntitySet="TicketNote" />
+    </AssociationSet>
+    <AssociationSet Name="UQ_Ticket_CategoryID" Association="Self.UQ_Ticket_CategoryID">
+      <End Role="Category" EntitySet="Category" />
+      <End Role="Ticket" EntitySet="Ticket" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

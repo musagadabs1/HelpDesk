@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-focus" lang="en">
+ <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <title>@ViewBag.Title :: ICT HelpDesk - IEI-ANCHOR PENSION MANAGERS LIMITED</title>
+
+    <meta name="description" content="ICT HelpDesk - IEI-ANCHOR PENSION MANAGERS LIMITED created by pixelcave and published on Themeforest">
+    <meta name="author" content="ICT Department, IEI-Anchor Pension Managers Limited">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Icons -->
+    <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+    <link rel="shortcut icon" href="@Url.Content("~/Content/assets/img/favicons/favicon.png")">
+
+    <link rel="stylesheet" href="@Url.Content("~/Content/Custom.css")" />
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/assets/img/favicons/favicon-16x16.png")" sizes="16x16">
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/assets/img/favicons/favicon-32x32.png")" sizes="32x32">
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/assets/img/favicons/favicon-96x96.png")" sizes="96x96">
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/assets/img/favicons/favicon-160x160.png")" sizes="160x160">
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/assets/img/favicons/favicon-192x192.png")" sizes="192x192">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-57x57.png")">
+    <link rel="apple-touch-icon" sizes="60x60" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-60x60.png")">
+    <link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-72x72.png")">
+    <link rel="apple-touch-icon" sizes="76x76" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-76x76.png")">
+    <link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-114x114.png")">
+    <link rel="apple-touch-icon" sizes="120x120" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-120x120.png")">
+    <link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-144x144.png")">
+    <link rel="apple-touch-icon" sizes="152x152" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-152x152.png")">
+    <link rel="apple-touch-icon" sizes="180x180" href="@Url.Content("~/Content/assets/img/favicons/apple-touch-icon-180x180.png")">
+    <!-- END Icons -->
+    <!-- Stylesheets -->
+    <!-- Web fonts -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+
+    <!-- Bootstrap and OneUI CSS framework -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/assets/css/bootstrap.min.css")">
+    <link rel="stylesheet" id="css-main" href="@Url.Content("~/Content/assets/css/oneui.css")">
+
+    <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
+    <!-- <link rel="stylesheet" id="css-theme" href="@Url.Content("~/Content/assets/css/themes/flat.min.css")"> -->
+    <!-- END Stylesheets -->
+</head>
+<body>
+    <!-- Page Container -->
+    <!--
+        Available Classes:
+
+        'enable-cookies'             Remembers active color theme between pages (when set through color theme list)
+
+        'sidebar-l'                  Left Sidebar and right Side Overlay
+        'sidebar-r'                  Right Sidebar and left Side Overlay
+        'sidebar-mini'               Mini hoverable Sidebar (> 991px)
+        'sidebar-o'                  Visible Sidebar by default (> 991px)
+        'sidebar-o-xs'               Visible Sidebar by default (< 992px)
+
+        'side-overlay-hover'         Hoverable Side Overlay (> 991px)
+        'side-overlay-o'             Visible Side Overlay by default (> 991px)
+
+        'side-scroll'                Enables custom scrolling on Sidebar and Side Overlay instead of native scrolling (> 991px)
+
+        'header-navbar-fixed'        Enables fixed header
+    -->
+    <div id="page-container" class="sidebar-l side-scroll header-navbar-fixed">
+        <!-- Header -->
+        <header id="header-navbar">
+            <div class="content-mini content-mini-full content-boxed">
+                <!-- Header Navigation Right -->
+                <ul class="nav-header pull-right">
+                    <li>
+                        <!-- Layout API, functionality initialized in App() -> uiLayoutApi() -->
+                        <button class="btn btn-default btn-image" onclick="javascript:document.getElementById('logoutForm').submit()" type="button">
+                            <img src="@Url.Content("~/Content/assets/img/avatars/avatar9.jpg")" alt="Avatar">
+                            <i class="fa fa-ellipsis-v">&nbsp;</i>&nbsp;@User.Identity.Name
+                        </button>
+                    </li>
+                </ul>
+                <!-- END Header Navigation Right -->
+                <!-- Header Navigation Left -->
+                <ul class="nav-header pull-left">
+                    <li class="header-content">
+                        <a class="h5" href="@Url.Action("Index", "Home")">
+                            <img src="@Url.Content("~/Content/assets/img/logo-small.png")" style="height: 40px;" />
+                            <span class="h4 font-w600 text-primary-dark">ICT HelpDesk</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- END Header Navigation Left -->
+            </div>
+        </header>
+        <!-- END Header -->
+        <!-- Main Container -->
+        <main id="main-container">
+            <!-- Sub Header -->
+            <div class="bg-gray-lighter visible-xs">
+                <div class="content-mini content-boxed">
+                    <button class="btn btn-block btn-default visible-xs push" data-toggle="collapse" data-target="#sub-header-nav">
+                        <i class="fa fa-navicon push-5-r"></i>Menu
+                    </button>
+                </div>
+            </div>
+            <div class="bg-primary-lighter collapse navbar-collapse remove-padding" id="sub-header-nav">
+                <div class="content-mini content-boxed">
+                    <input type="hidden" id="currentNavTitle" value="@ViewBag.Title" />
+                    <ul id="mainNav" class="nav nav-pills nav-sub-header push">
+                        @if (HelpDesk.Controllers.HomeController.IsMember(User.Identity.Name, System.Configuration.ConfigurationManager.AppSettings["ADAG"].ToString()))
+                        {
+                            <li data-nav-title="Tickets">
+                                <a href="@Url.Action("Tickets", "Home", routeValues: new { status = "" })">
+                                    <i class="fa fa-sticky-note-o push-5-r"></i>Tickets
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li data-nav-title="My Tickets">
+                                <a href="@Url.Action("Index", "Home")">
+                                    <i class="fa fa-ticket push-5-r"></i>My Tickets
+                                </a>
+                            </li>
+                            <li data-nav-title="Raise New Ticket">
+                                <a href="@Url.Action("RaiseTicket", "Home")">
+                                    <i class="fa fa-sticky-note-o push-5-r"></i>Raise New Ticket
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="javascript:document.getElementById('logoutForm').submit()">
+                                <i class="si si-logout push-5-r"></i>Log out
+                            </a>
+                        </li>                        
+                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                        }
+                    </ul>
+                </div>
+            </div>
+            <!-- END Sub Header -->
+            <!-- Page Content -->
+            <div class="content content-boxed">
+                @RenderBody()
+            </div>
+            <!-- END Page Content -->
+        </main>
+        <!-- END Main Container -->
+        <!-- Footer -->
+        <footer id="page-footer" class="bg-body font-s12">
+            <div class="content-mini content-mini-full content-boxed clearfix push-15">
+                <div class="pull-right">
+                    Powered by <span class="font-w600">ICT Department, IEI-Anchor Pension Managers Limited</span>
+                </div>
+                <div class="pull-left">
+                    <span class="font-w600">ICT HelpDesk 1.0</span> &copy; 2017
+                </div>
+            </div>
+        </footer>
+        <!-- END Footer -->
+    </div>
+    <!-- END Page Container -->
+    <!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
+    <script src="@Url.Content("~/Content/assets/js/core/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/jquery.slimscroll.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/jquery.scrollLock.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/jquery.appear.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/jquery.countTo.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/jquery.placeholder.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/core/js.cookie.min.js")"></script>
+    <script src="@Url.Content("~/Content/assets/js/app.js")"></script>
+
+    <!-- Page Plugins -->
+    <script src="@Url.Content("~/Content/assets/js/plugins/chartjs/Chart.min.js")"></script>
+
+    <!-- Page JS Code -->
+    <script src="@Url.Content("~/Content/assets/js/pages/base_pages_dashboard_v2.js")"></script>
+    <script>
+        jQuery(function () {
+            // Init page helpers (CountTo plugin)
+            App.initHelpers('appear-countTo');
+
+            var currentNavTitle = $('#currentNavTitle').val();
+            var currentNavLink = $('ul#mainNav').find('li [data-nav-title="' + currentNavTitle + ' "]');
+
+            $('ul#mainNav li').each(function () {
+                $(this).removeClass("active");
+            });
+
+            $(currentNavLink).addClass("active");            
+        });
+
+        window.getParameterByName = function(name, url) {
+            // Credit: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript/901144#901144
+
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

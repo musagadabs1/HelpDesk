@@ -1,0 +1,44 @@
+﻿@using HelpDesk.DAL;
+
+@model HelpDesk.Models.TicketViewModel
+@{
+    ViewBag.Title = "Raise New Ticket";
+}
+
+<h2>@ViewBag.Title</h2>
+<br />
+<div class="row">
+    @using (Html.BeginForm("RaiseTicket", "Home", FormMethod.Post, new { @class = "form-horizontal", id = "raiseTicketForm", role = "form", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" class="form-control" id="Subject" name="Subject" placeholder="Subject" required />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" id="Description" name="Description" rows="6" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="CategoryID" name="CategoryID" class="form-control select2" required>
+                    <option value="">[Select a category for your issue]</option>
+                    @foreach (Category category in (List<Category>)ViewBag.Categories)
+                    {
+                    <option value="@category.CategoryID">@category.Category1</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>File Attachement(s)</label>
+                <input type="file" id="FileAttachments" name="FileAttachments" multiple />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+    }
+</div>
