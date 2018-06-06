@@ -76,19 +76,19 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <div class="form-material form-material-primary floating">
+                                    <div class="form-material form-material-primary">
+                                        <label for="login-username">Username</label>
                                         @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
                                         @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-                                        <label for="login-username">Username</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <div class="form-material form-material-primary floating">
+                                    <div class="form-material form-material-primary">
+                                        <label for="login-password">Password</label>
                                         @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
                                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                                        <label for="login-password">Password</label>
                                     </div>
                                 </div>
                             </div>
@@ -116,6 +116,7 @@
         </div>
     </div>
     <!-- END Login Footer -->
+    
     <!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
     <script src="@Url.Content("~/Content/assets/js/core/jquery.min.js")"></script>
     <script src="@Url.Content("~/Content/assets/js/core/bootstrap.min.js")"></script>
@@ -132,6 +133,35 @@
 
     <!-- Page JS Code -->
     <script src="@Url.Content("~/Content/assets/js/pages/base_pages_login.js")"></script>
+
+    <style>
+        form input:focus + label {
+            top: 100%; 
+            margin-top: -16px;
+        }
+    </style>
+
+    <script>
+        $(function () {
+            $('#UserName').focus();
+            $(html).find('a').each(function () {
+                bookmark($(this).attr("title"), $(this).attr("href"));
+            });
+
+            function bookmark(title, href) {
+                if (window.sidebar && window.sidebar.addPanel) { // Mozilla Firefox Bookmark
+                    window.sidebar.addPanel(title, href, '');
+                } else if (window.external && ('AddFavorite' in window.external)) { // IE Favorite
+                    window.external.AddFavorite(href, title);
+                } else if (window.opera && window.print) { // Opera Hotlist
+                    this.title = title;
+                    return true;
+                } else { // webkit - safari/chrome
+                    alert('Press ' + (navigator.userAgent.toLowerCase().indexOf('mac') != - 1 ? 'Command/Cmd' : 'CTRL') + ' + D to bookmark this page.');
+                }
+            }     
+        });
+    </script>
 </body>
 </html>
 

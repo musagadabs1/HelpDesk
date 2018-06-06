@@ -9,31 +9,41 @@
 
 @if (isICTMember)
 {
-<div class="row">
-    <div class="form-group">
-        <label class="control-label">Filter by: </label>
-        <div class="col-md-5">
-            <select id="filterBy" class="form-control">
-                <option value="N">New/Pending</option>
-                <option value="I">In progress</option>
-                <option value="D">Note Added</option>
-                <option value="R">Resolved</option>
-                <option value="C">Closed successfully</option>
-                <option value="U">Closed unsuccessfully</option>
-            </select>
+    <div class="row">
+        <div style="margin-left: 10px;">
+            <div class="form-group">
+                <label class="control-label text-left pull-left" style="position: relative; top: 10px;">Filter by: </label>
+                <div class="col-sm-3">
+                    <select id="filterBy" class="form-control">
+                        <option value="N">New/Pending</option>
+                        <option value="I">In progress</option>
+                        <option value="D">Note Added</option>
+                        <option value="R">Resolved</option>
+                        <option value="C">Closed successfully</option>
+                        <option value="U">Closed unsuccessfully</option>
+                        <option value="V">Audit Satisfied</option>
+                        <option value="X">Audit Not Satisfied</option>
+                        <option value="">All Tickets</option>
+                    </select>
+                </div>
+            </div>
+            @*<div class="col-sm-3"><a class="form-control pull-right" href="@Url.Action("ExportTickets")">Export Tickets</a></div>*@
         </div>
-    </div>
-</div>
+    </div><p>&nbsp;</p>
 }
 
+@*<div class="col-sm-3"><a class="form-control" href="@Url.Action("ExportTickets")">Export Tickets</a></div>*@
 <table id="myTickets" class="table table-bordered table-striped js-dataTable-full-pagination">
+
     <thead>
         <tr>
             <th>SN</th>
+            <th>Owner</th>
             <th>Ticket No#</th>
             <th>Subject</th>
             <th>Status</th>
-            <th>Age</th>
+            @*<th>Age</th>*@
+            <th>Last Modified By</th>
         </tr>
     </thead>
     <tbody>
@@ -44,10 +54,12 @@
                     @item.SN
                     <input type="hidden" class="id" value="@item.TicketID" />
                 </td>
+                <td>@HelpDesk.Controllers.HomeController.GetUserFullName(item.CreatedBy)</td>
                 <td>@item.TicketNo</td>
                 <td>@item.Subject</td>
                 <td>@HelpDesk.Controllers.HomeController.GetTicketStatus(item.Status)</td>
-                <td>@HelpDesk.Controllers.HomeController.CalculateAge(item.CreationDate, DateTime.Now)</td>
+                @*<td>@HelpDesk.Controllers.HomeController.CalculateAge(item.CreationDate, DateTime.Now)</td>*@
+                <td>@HelpDesk.Controllers.HomeController.GetUserFullName(item.ModifiedBy)</td>
             </tr>
         }
     </tbody>

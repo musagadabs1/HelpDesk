@@ -26,5 +26,5 @@ button.accordion.active, button.accordion:hover {
 div.panel {
     padding: 10px 18px;
     background-color: white;
-    display: none;
+    /*display: none;*/
 }

@@ -1,0 +1,210 @@
+﻿@model List<HelpDesk.Models.TicketViewModel>
+@{
+    bool isAuditMember = HelpDesk.Controllers.HomeController.IsMember(User.Identity.Name, System.Configuration.ConfigurationManager.AppSettings["ADIAG"].ToString());
+    ViewBag.Title = (isAuditMember ? "Audit Tickets" : "My Tickets");
+}
+
+<h2>@ViewBag.Title</h2>
+<br />
+
+@if (isAuditMember)
+{
+<div class="row">
+    <div class="col-md-9">
+        <div style="margin-left: 10px;">
+            <div class="form-group">
+                <label class="control-label text-left pull-left" style="position: relative; top: 10px;">Filter by: </label>
+                <div class="col-sm-6">
+                    <select id="filterBy" class="form-control">
+                        <option value="">All Tickets</option>
+                        <option value="N">New/Pending</option>
+                        <option value="I">In progress</option>
+                        <option value="D">Note Added</option>
+                        <option value="R">Resolved</option>
+                        <option value="C">Closed successfully</option>
+                        <option value="U">Closed unsuccessfully</option>
+                        <option value="V">Audit Vedified</option>
+                        <option value="X">Audit Not Satisfied</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="col-md-3"><a class="form-control pull-right" href="@Url.Action("ExportTickets")">Export Tickets</a></div>*@
+</div>
+    
+    <p>&nbsp;</p>
+}
+
+<div id="messanger"></div>
+
+<table id="myTickets" class="table table-bordered table-striped js-dataTable-full-pagination">
+    <thead>
+        <tr>
+            <th>SN</th>
+            <th>Owner</th>
+            <th>Ticket No#</th>
+            <th>Subject</th>
+            <th>Status</th>
+            @*<th>Age</th>*@
+            <th>Last Modified By</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (HelpDesk.Models.TicketViewModel item in Model)
+        {
+            <tr>
+                <td>
+                    @item.SN
+                    <input type="hidden" class="id" value="@item.TicketID" />
+                </td>
+                <td>@HelpDesk.Controllers.HomeController.GetUserFullName(item.CreatedBy)</td>
+                <td>@item.TicketNo</td>
+                <td>@item.Subject</td>
+                <td>@HelpDesk.Controllers.HomeController.GetTicketStatus(item.Status)</td>
+                @*<td>@HelpDesk.Controllers.HomeController.CalculateAge(item.CreationDate)</td>*@
+                <td>@HelpDesk.Controllers.HomeController.GetUserFullName(item.ModifiedBy)</td>
+                <td>
+                    <a href="@Url.Action("TicketDetails", "Home", new { id = @item.TicketID })">
+                        <i class="fa fa-eye"></i> View
+                    </a>&nbsp;|&nbsp;
+                    <a href="#" onclick="audit(this);">
+                        <i class="fa fa-comment"></i> Audit
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal" id="modal-audit-action" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        @using (Html.BeginForm("AuditTicket", "Home", FormMethod.Post, new { @class = "form-horizontal", id = "updateTicketForm", role = "form", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-content">
+                <div class="block block-themed block-transparent remove-margin-b">
+                    <div class="block-header bg-primary-dark">
+                        <ul class="block-options">
+                            <li>
+                                <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="block-title">Audit Ticket</h3>
+                    </div>
+                    <div class="block-content">
+                        <div class="col-md-12">
+                            <div class="row" id="msg"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Ticket No</label>
+                                <div class="col-sm-10">
+                                    <input id="TicketNo" name="TicketNo" class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Subject</label>
+                                <div class="col-sm-10">
+                                    <input id="Subject" name="Subject" class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Subject</label>
+                                <div class="col-sm-10">
+                                    <select id="Status" name="Status" class="form-control">
+                                        <option value="D">Note Added</option>
+                                        <option value="V">Audit Verified</option>
+                                        <option value="X">Audit Not Satisfied</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Note</label>
+                                <textarea class="form-control" id="Description" name="Description" rows="6" required></textarea>
+                            </div>
+
+                            <input type="hidden" id="TicketID" name="TicketID" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-check"></i> Ok</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    #myTickets tbody tr:hover {
+        cursor: pointer;
+        background-color: #E1E1E1;
+    }
+</style>
+
+<input type="hidden" id="ticketStatus" value="@ViewBag.Status" />
+
+@section scripts {
+    <!-- Page JS Plugins -->
+    <script src="@Url.Content("~/Content/assets/js/plugins/datatables/jquery.dataTables.min.js")"></script>
+
+    <!-- Page JS Code -->
+    <script src="@Url.Content("~/Content/assets/js/pages/base_tables_datatables.js")"></script>
+
+    <script>
+        $(function () {
+            var status = (getParameterByName('status') == null ? '' : getParameterByName('status'));
+            $('#filterBy').val(status);
+
+            $('#checkAllTickets').change(function () {
+                var checked = $(this).is(':checked');
+                $('#myTickets tbody tr input:checkbox').each(function () {
+                    $(this).prop('checked', checked);
+                });
+            });
+
+            window.audit = function (control) {
+                if (control) {
+                    var $row = $(control).closest('tr');
+                    $('#TicketID').val($row.find('td:nth-child(1)').find('.id').val());
+                    $('#Subject').val($row.find('td:nth-child(4)').html());
+                    $('#TicketNo').val($row.find('td:nth-child(3)').html());
+
+                    $('#modal-audit-action').modal('show');
+                }
+            }
+
+            $('form#updateTicketForm').submit(function (e) {
+                e.preventDefault();
+
+                showMsg('#msg', 'info', 'Info', 'Processing, please wait...');
+
+                $.post($(this).attr('action'), $(this).serialize())
+                    .then((result) => {
+                        if (result) {
+                            if (result.type == 'success') {
+                                showMsg('#msg', result.type, result.header, result.message);
+                                location.reload();
+                            } else {
+                                showMsg('#msg', result.type, result.header, result.message);
+                            }
+                        } else {
+                            showMsg('#msg', 'info', 'Info', 'Processing, please wait...');
+                        }
+                    }).fail(function (err) {
+                        showMsg('#msg', 'danger', 'Error', err);
+                    });
+
+            });
+
+            $('#filterBy').change(function (e) {
+                e.preventDefault();
+
+                var url = '@Url.Action("Audit", "Home", routeValues: new { status = "statusy" })';
+                url = url.replace('statusy', $(this).val());
+                window.location.href = url;
+            });
+        });
+    </script>
+}

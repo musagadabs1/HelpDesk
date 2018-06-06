@@ -32,12 +32,15 @@
     <Property Name="Subject" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="Description" Type="ntext" Nullable="false" />
     <Property Name="Status" Type="nchar" MaxLength="1" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="CreationDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="IsDeleted" Type="bit" Nullable="false" />
     <Property Name="OwnerEmail" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="IsAuditVerified" Type="bit" Nullable="false" />
+    <Property Name="VerifiedBy" Type="nvarchar" MaxLength="100" />
+    <Property Name="VerificationDate" Type="datetime" />
   </EntityType>
   <EntityType Name="TicketFile">
     <Key>
@@ -48,9 +51,9 @@
     <Property Name="FileName" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="FileForTOrN" Type="nchar" MaxLength="1" Nullable="false" />
     <Property Name="RefID" Type="uniqueidentifier" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="CreationDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="IsDeleted" Type="bit" Nullable="false" />
   </EntityType>
@@ -61,9 +64,9 @@
     <Property Name="TicketNoteID" Type="uniqueidentifier" Nullable="false" />
     <Property Name="TicketID" Type="uniqueidentifier" Nullable="false" />
     <Property Name="Note" Type="ntext" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="CreationDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="IsDeleted" Type="bit" Nullable="false" />
   </EntityType>

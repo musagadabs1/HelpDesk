@@ -14,16 +14,16 @@
     <div class="col-md-6">
         <label class="col-md-4 control-label text-right">Ticket:</label>
         <div class="col-md-8">
-            <label >@Model.TicketNo</label>
+            <label>@Model.TicketNo</label>
         </div>
     </div>
-    
-    <div class="col-md-6">
+
+    @*<div class="col-md-6">
         <label class="col-md-4 control-label text-right">Age:</label>
         <div class="col-md-8">
-            <label>@HelpDesk.Controllers.HomeController.CalculateAge(Model.CreationDate, DateTime.Now)</label>
+            <label>@HelpDesk.Controllers.HomeController.CalculateAge(Model.CreationDate)</label>
         </div>
-    </div>
+    </div>*@
 </div>
 <div class="row">
     <div class="col-md-6">
@@ -44,7 +44,7 @@
     <div class="col-md-6">
         <label class="col-md-4 control-label text-right">Owner:</label>
         <div class="col-md-8">
-            <label>@Model.CreatedBy</label>
+            <label>@HelpDesk.Controllers.HomeController.GetUserFullName(Model.CreatedBy)</label>
         </div>
     </div>
 
@@ -66,7 +66,7 @@
             var noteFiles = Model.TicketFileViewModels.Where(p => p.FileForTOrN.Equals("N") && p.RefID.Equals(Model.TicketID)).ToList();
 
             <button class="accordion">
-                <span style="width: 50%;">Note added by @ticketNote.CreatedBy</span>
+                <span style="width: 50%;">Note added by @HelpDesk.Controllers.HomeController.GetUserFullName(ticketNote.CreatedBy)</span>
                 <span style="width: 50%; text-align: right;">@string.Format("{0:dd-MM-yyyy h:mm:ss tt}", ticketNote.CreationDate)</span>
             </button>
             <div class="panel">
@@ -84,7 +84,7 @@
     }
 
     <input type="hidden" id="filesNoteCount" value="@ticketNotes.Count" />
-    <button class="accordion">Initiated by @Model.CreatedBy</button>
+    <button class="accordion">Initiated by @HelpDesk.Controllers.HomeController.GetUserFullName(Model.CreatedBy)</button>
     <div class="panel" id="initiatedBy">
         <p>@Model.Description</p>
 
@@ -101,8 +101,8 @@
 </div>
 
 <br />
-<button class="accordion">Update Ticket</button>
-<div class="panel">
+<h4>Update Ticket</h4><hr />
+<div class="container">
     @using (Html.BeginForm("UpdateTicket", "Home", FormMethod.Post, new { @class = "form-horizontal", id = "updateTicketForm", role = "form", enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
@@ -166,14 +166,6 @@
 
             if (filesNoteCount == 0) {
                 initiatedBy.css('display', 'block');
-            }
-
-            var subject = getParameterByName('subject'),
-                mailBody = getParameterByName('mailBody'),
-                recipients = getParameterByName('recipients');
-
-            if (subject && mailBody && recipients) {
-                window.location.href = "http://ieianchorpensions.com/?api_ict_mail_ticket&subject=" + subject + "&mailBody=" + mailBody.replace("'", "''") + "&recipients=" + recipients;
             }
         });
     </script>
