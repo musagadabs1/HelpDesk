@@ -1,6 +1,6 @@
-﻿using HelpDesk.DAL;
+﻿using CrystalDecisions.CrystalReports.Engine;
+using HelpDesk.DAL;
 using HelpDesk.Models;
-using IEIA.CommonUtil.Alert.Email;
 using IEIA.CommonUtil.Web;
 using System;
 using System.Collections.Generic;
@@ -24,6 +24,14 @@ namespace HelpDesk.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        public HomeController()
+        {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
+        }
+
         private string fileAttachmentPath = "~/Content/Uploads/FileAttachments";
 
         public static string CalculateAge(DateTime date1, DateTime date2)
@@ -31,7 +39,10 @@ namespace HelpDesk.Controllers
             string result = string.Empty;
 
             if (date2 == null)
+            {
                 date2 = DateTime.Now;
+            }
+
 
             TimeSpan difference = date2.Subtract(date1);
 
@@ -56,6 +67,38 @@ namespace HelpDesk.Controllers
                 return string.Format("{0} second{1} ago", seconds, seconds > 1 ? "s" : "");
 
             return "";
+        }
+
+        public static string CalculateAge(DateTime age)
+        {
+            const double approxDaysPerMonth = 30.4375;
+            const double approxDaysPerYear = 365.25;
+
+            int days = (DateTime.Now - age).Days;
+            int hours = (DateTime.Now - age).Hours;
+            int minutes = (DateTime.Now - age).Minutes;
+            int seconds = (DateTime.Now - age).Seconds;
+
+            int years = (int)(days / approxDaysPerYear);
+            days -= (int)(years * approxDaysPerYear);
+
+            int months = (int)(days / approxDaysPerMonth);
+
+            if (years > 0)
+                return string.Format("{0} year{1} ago", years, years > 1 ? "s" : "");
+            if (months > 0)
+                return string.Format("{0} month{1} ago", months, months > 1 ? "s" : "");
+            if (days > 0)
+                return string.Format("{0} day{1} ago", days, days > 1 ? "s" : "");
+            if (hours > 0)
+                return string.Format("{0} hour{1} ago", hours, hours > 1 ? "s" : "");
+            if (minutes > 0)
+                return string.Format("{0} minute{1} ago", minutes, minutes > 1 ? "s" : "");
+            if (seconds > 0)
+                return string.Format("{0} second{1} ago", seconds, seconds > 1 ? "s" : "");
+
+            return "";
+
         }
 
         public static string GetTicketStatus(string status)
@@ -91,6 +134,12 @@ namespace HelpDesk.Controllers
                 case "O":
                     result = "Reopened";
                     break;
+                case "V":
+                    result = "Audit Vedified";
+                    break;
+                case "X":
+                    result = "Audit Not Satisfied";
+                    break;
             }
 
             return result;
@@ -112,6 +161,49 @@ namespace HelpDesk.Controllers
             }
         }
 
+        public static string GetUserFullName(string userName)
+        {
+            try
+            {
+                UserPrincipal userPrincipal = GetUserDetails(userName);
+                if (userPrincipal != null)
+                {
+                    return userPrincipal.DisplayName;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static UserPrincipal GetUserDetails(string userName)
+        {
+            try
+            {
+                using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, ConfigurationManager.AppSettings["ADIP"].ToString()))
+                {
+                    var usr = UserPrincipal.FindByIdentity(pc, userName);
+                    if (usr != null)
+                    {
+                        return usr;
+                    }
+                    else
+                    {
+                        throw new ApplicationException("User details not found");
+                    }
+                }
+            }
+            catch (Exception E)
+            {
+                throw E;
+            }
+        }
+
         public async Task<ActionResult> Index()
         {
             List<TicketViewModel> tickets = await this.GetTickets(null, User.Identity.Name);
@@ -120,8 +212,12 @@ namespace HelpDesk.Controllers
 
         private async Task<List<TicketViewModel>> GetTickets(string status, string userName)
         {
-            List<TicketViewModel> tickets = new List<TicketViewModel>();
-            using (HelpDeskEntities dataContext = new HelpDeskEntities())
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
+            var tickets = new List<TicketViewModel>();
+            using (var dataContext = new HelpDeskEntities())
             {
                 var data = new List<Ticket>();
 
@@ -186,6 +282,10 @@ namespace HelpDesk.Controllers
         [HttpGet]
         public async Task<ActionResult> RaiseTicket()
         {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
             using (HelpDeskEntities dataContext = new HelpDeskEntities())
             {
                 ViewBag.Categories = await dataContext.Categories.ToListAsync();
@@ -198,6 +298,10 @@ namespace HelpDesk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RaiseTicket(TicketViewModel model)
         {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
             Guid id = Guid.NewGuid();
             bool isSuccessful = false;
             bool sendEmailAlert = false;
@@ -363,8 +467,8 @@ namespace HelpDesk.Controllers
 
                 mailBody = mailBody +
                             "<p>Click <a href=\"" + SecurityHelper.BuildAbsolute("Home/TicketDetails/" + ticketID) + "\" title=\"View Ticket\">here</a></p>" +
-                            "<p><strong>" + User.Identity.Name + "</strong></p>" +
-                            "<p><strong>ICT HelpDesk</strong></p>" +
+                            "<p><strong>" + Session["displayName"] + "</strong><br>" +
+                            "<strong>ICT HelpDesk</strong></p>" +
                             "<img src=\"" + SecurityHelper.BuildAbsolute("Content/assets/img/logo.png") + "\" alt=\"IEIA-Logo\" />";
 
                 if (fileAttachments != null)
@@ -401,6 +505,10 @@ namespace HelpDesk.Controllers
         [HttpGet]
         public async Task<ActionResult> TicketDetails(Guid id, string errors = "", string subject = "", string mailBody = "", string recipients = "")
         {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
             Ticket ticket = new Ticket();
             TicketViewModel ticketViewModel = new TicketViewModel();
             try
@@ -468,11 +576,98 @@ namespace HelpDesk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateTicket(TicketViewModel model)
         {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
+
+            StringBuilder errors = new StringBuilder();
+            Guid id = model.TicketID;
+
+            var isTicketUpdated = await IsTicketUpdated(model);
+            if (isTicketUpdated.Item1)
+            {
+                GeneralSetting generalSetting = null;
+                using (HelpDeskEntities dataContext = new HelpDeskEntities())
+                {
+                    generalSetting = await dataContext.GeneralSettings.FirstOrDefaultAsync();
+                    if (generalSetting != null)
+                    {
+                        if (generalSetting.EnableEmailAlert && !string.IsNullOrWhiteSpace(generalSetting.RecipientEmails))
+                        {
+                            Ticket ticket = await dataContext.Tickets.FirstOrDefaultAsync(param => param.TicketID == id);
+                            string recipients = ticket.OwnerEmail + "," + generalSetting.RecipientEmails;
+                            SendEmail("ICT HelpDesk Re: [" + model.TicketNo + "] " + model.Subject, model.Description, recipients, id.ToString(), model.FileAttachments);
+                            //if (HomeController.IsMember(User.Identity.Name, ConfigurationManager.AppSettings["ADAG"].ToString()))
+                            //    SendEmail("ICT HelpDesk Re: [" + model.TicketNo + "] " + model.Subject, model.Description, model.OwnerEmail, id.ToString(), model.FileAttachments);
+                            //else
+                            //    SendEmail("ICT HelpDesk Re: [" + model.TicketNo + "] " + model.Subject, model.Description, generalSetting.RecipientEmails, id.ToString(), model.FileAttachments);
+                        }
+                    }
+                }
+
+                return RedirectToAction("TicketDetails", new RouteValueDictionary(new { controller = "Home", action = "TicketDetails", id = id }));
+            }
+
+            return RedirectToAction("TicketDetails", new RouteValueDictionary(new { controller = "Home", action = "TicketDetails", id = id, errors = isTicketUpdated.Item2 }));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AuditTicket(TicketViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
+            if (!HomeController.IsMember(User.Identity.Name, ConfigurationManager.AppSettings["ADIAG"].ToString()))
+            {
+                Redirect("~/Account/AccessDenied");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Description))
+            {
+                return Json(new { type = "danger", header = "Error", message = "Please enter a note for your action." });
+            }
+
+            StringBuilder errors = new StringBuilder();
+            Guid id = model.TicketID;
+
+            var isTicketUpdated = await IsTicketUpdated(model);
+            if (isTicketUpdated.Item1)
+            {
+                GeneralSetting generalSetting = null;
+                using (HelpDeskEntities dataContext = new HelpDeskEntities())
+                {
+                    generalSetting = await dataContext.GeneralSettings.FirstOrDefaultAsync();
+                    if (generalSetting != null)
+                    {
+                        Ticket ticket = await dataContext.Tickets.FirstOrDefaultAsync(param => param.TicketID == model.TicketID);
+                        if (ticket != null)
+                        {
+                            // mail sender and ict
+                            string recipients = ticket.OwnerEmail + "," + generalSetting.RecipientEmails;
+                            SendEmail("ICT HelpDesk Re: [" + model.TicketNo + "] " + model.Subject, model.Description, recipients, id.ToString(), model.FileAttachments);
+                        }
+                    }
+                }
+
+                return Json(new { type = "success", header = "Success", message = "" });
+            }
+
+            return Json(new { type = "danger", header = "Error", message = isTicketUpdated.Item2 });
+        }
+
+        private async Task<Tuple<bool, string>> IsTicketUpdated(TicketViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(SessionVar.GetString("displayName")))
+            {
+                Redirect("~/Account/Login");
+            }
+
             StringBuilder errors = new StringBuilder();
             Guid id = model.TicketID;
             bool isSuccessful = false;
-            bool sendEmailAlert = false;
-            GeneralSetting generalSetting = null;
 
             try
             {
@@ -489,7 +684,7 @@ namespace HelpDesk.Controllers
 
                 if (errors.Length > 0)
                 {
-                    return RedirectToAction("TicketDetails", new RouteValueDictionary(new { controller = "Home", action = "TicketDetails", id = id, errors = errors.ToString() }));
+                    isSuccessful = false;
                 }
                 else
                 {
@@ -581,16 +776,6 @@ namespace HelpDesk.Controllers
                                     }
                                     #endregion
 
-                                    // trigger e-mail [optional]
-                                    generalSetting = await dataContext.GeneralSettings.FirstOrDefaultAsync();
-                                    if (generalSetting != null)
-                                    {
-                                        if (generalSetting.EnableEmailAlert && !string.IsNullOrWhiteSpace(generalSetting.RecipientEmails))
-                                        {
-                                            sendEmailAlert = true;
-                                        }
-                                    }
-
                                     transactionScope.Complete();
                                     isSuccessful = true;
                                 }
@@ -616,18 +801,15 @@ namespace HelpDesk.Controllers
                 HomeController.LogError(ex, HttpContext.Server.MapPath("~/Error_Log.txt"));
             }
 
-            if (isSuccessful)
-            {
-                if (sendEmailAlert)
-                    if (HomeController.IsMember(User.Identity.Name, ConfigurationManager.AppSettings["ADAG"].ToString()))
-                        SendEmail("ICT HelpDesk Re: [" + model.TicketNo + "] " + model.Subject, model.Description, model.OwnerEmail, id.ToString(), model.FileAttachments);
-                    else
-                        SendEmail("ICT HelpDesk Re: [" + model.TicketNo + "] " + model.Subject, model.Description, generalSetting.RecipientEmails, id.ToString(), model.FileAttachments);
+            return Tuple.Create(isSuccessful, errors.ToString());
+        }
 
-                return RedirectToAction("TicketDetails", new RouteValueDictionary(new { controller = "Home", action = "TicketDetails", id = id }));
-            }
+        public async Task<ActionResult> Audit(string status = "")
+        {
+            List<TicketViewModel> tickets = await this.GetTickets(status, null);
+            ViewBag.Status = status;
 
-            return RedirectToAction("TicketDetails", new RouteValueDictionary(new { controller = "Home", action = "TicketDetails", id = id, errors = errors.ToString() }));
+            return View(tickets);
         }
 
         public ActionResult About()
@@ -686,5 +868,57 @@ namespace HelpDesk.Controllers
                 string error = ex.Message;
             }
         }
+
+        public ActionResult ExportTickets()
+        {
+            List<TicketReportViewModel> ticketsViewModel = GetReportTicket();
+
+            //string b = HttpContext.Current.Request.MapPath("~/Example.txt");
+            //string a = HttpContext.Current.Server.MapPath("~/App_Data/Example.xml");
+            ReportDocument reportDocument = new ReportDocument();
+            reportDocument.Load(Path.Combine(System.Web.HttpContext.Current.Server.MapPath("~/HelpDeskReport.rpt")));
+            reportDocument.SetDataSource(ticketsViewModel);
+
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+
+            var stream = reportDocument.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            stream.Seek(0, SeekOrigin.Begin);
+            //return reportDocument.ExportToHttpResponse(CrystalDecisions.Shared.ExportFormatType.ExcelRecord,Response,true,"tickets");
+            return File(stream, "application/pdf", "ticketSummary" + DateTime.Today.ToShortDateString() + ".pdf");
+        }
+        private List<TicketReportViewModel> GetReportTicket()
+        {
+            try
+            {
+                List<TicketReportViewModel> reportViewModels = new List<TicketReportViewModel>();
+                using (var db=new HelpDeskEntities())
+                {
+                    var tickets = db.Tickets.ToList();
+                    foreach (var item in tickets)
+                    {
+                        reportViewModels.Add(new TicketReportViewModel
+                        {
+                            TicketNo=item.TicketNo,
+                            Subject=item.Subject,
+                            Description=item.Description,
+                            Status=GetTicketStatus(item.Status),
+                            CreatedBy=item.CreatedBy,
+                            CreationDate=item.CreationDate
+
+                        });
+                    }
+                    
+                }
+                return reportViewModels;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
     }
 }

@@ -12,10 +12,12 @@
             $('#myTickets tbody tr').click(function (e) {
                 e.preventDefault();
 
-                var url = '@Url.Action("TicketDetails", "Home", routeValues: new { id = "idy" })';
-                url = url.replace('idy', $(this).find('.id').val());
+                if ($(this).find('td:first-child').html() != 'No data available in table') {
+                    var url = '@Url.Action("TicketDetails", "Home", routeValues: new { id = "idy" })';
+                    url = url.replace('idy', $(this).find('.id').val());
 
-                window.location.href = url;
+                    window.location.href = url;
+                }
             });
         });
     </script>

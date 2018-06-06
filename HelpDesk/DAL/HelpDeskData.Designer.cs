@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\root\documents\visual studio 2015\Projects\HelpDesk\HelpDesk\DAL\HelpDeskData.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\awedaa\Documents\Dev\VS\Web\HelpDesk\HelpDesk\DAL\HelpDeskData.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

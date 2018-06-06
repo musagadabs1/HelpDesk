@@ -33,15 +33,18 @@
     <Property Name="Subject" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
-    <Property Name="CreatedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="CreationDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Category" Relationship="Self.UQ_Ticket_CategoryID" FromRole="Ticket" ToRole="Category" />
     <NavigationProperty Name="TicketFiles" Relationship="Self.FK_TicketFile_Ticket" FromRole="Ticket" ToRole="TicketFile" />
     <NavigationProperty Name="TicketNotes" Relationship="Self.FK_TicketNote_Ticket" FromRole="Ticket" ToRole="TicketNote" />
     <Property Name="OwnerEmail" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IsAuditVerified" Type="Boolean" Nullable="false" />
+    <Property Name="VerifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="VerificationDate" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="TicketFile">
     <Key>
@@ -52,9 +55,9 @@
     <Property Name="FileName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="FileForTOrN" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
     <Property Name="RefID" Type="Guid" Nullable="false" />
-    <Property Name="CreatedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="CreationDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Ticket" Relationship="Self.FK_TicketFile_Ticket" FromRole="TicketFile" ToRole="Ticket" />
@@ -66,9 +69,9 @@
     <Property Name="TicketNoteID" Type="Guid" Nullable="false" />
     <Property Name="TicketID" Type="Guid" Nullable="false" />
     <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="CreatedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="CreationDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Ticket" Relationship="Self.FK_TicketNote_Ticket" FromRole="TicketNote" ToRole="Ticket" />

@@ -28,6 +28,9 @@
     <EntitySetMapping Name="Tickets">
       <EntityTypeMapping TypeName="HelpDeskModel.Ticket">
         <MappingFragment StoreEntitySet="Ticket">
+          <ScalarProperty Name="VerificationDate" ColumnName="VerificationDate" />
+          <ScalarProperty Name="VerifiedBy" ColumnName="VerifiedBy" />
+          <ScalarProperty Name="IsAuditVerified" ColumnName="IsAuditVerified" />
           <ScalarProperty Name="OwnerEmail" ColumnName="OwnerEmail" />
           <ScalarProperty Name="TicketID" ColumnName="TicketID" />
           <ScalarProperty Name="TicketNo" ColumnName="TicketNo" />

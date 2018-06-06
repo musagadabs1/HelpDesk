@@ -33,6 +33,9 @@ namespace HelpDesk.DAL
         public System.DateTime ModifiedDate { get; set; }
         public bool IsDeleted { get; set; }
         public string OwnerEmail { get; set; }
+        public bool IsAuditVerified { get; set; }
+        public string VerifiedBy { get; set; }
+        public Nullable<System.DateTime> VerificationDate { get; set; }
     
         public virtual Category Category { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
